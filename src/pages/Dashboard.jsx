@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { resumeApi, jobsApi } from '../api/api.js'
+import { resumeApi, jobsApi, userApi } from '../api/api.js'
 import ResumeUpload from '../components/ResumeUpload.jsx'
 import SkillsList from '../components/SkillsList.jsx'
 import JobFilters from '../components/JobFilters.jsx'
@@ -37,6 +37,7 @@ export default function Dashboard({ user, onLogout }) {
 
   const handleResumeParsed = (newSkills) => {
     setSkills(newSkills)
+    setHasExistingResume(true)
     setProfileRefreshKey((k) => k + 1)
   }
 
