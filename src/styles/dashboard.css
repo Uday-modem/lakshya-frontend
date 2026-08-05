@@ -10,6 +10,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 18px 40px;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .dash-nav .brand {
@@ -37,6 +39,7 @@
 .dash-nav .logout-btn:hover { background: rgba(247,245,239,0.1); }
 
 html, body { overflow-x: hidden; max-width: 100%; }
+* { box-sizing: border-box; }
 
 .dash-body {
   display: grid;
@@ -45,10 +48,32 @@ html, body { overflow-x: hidden; max-width: 100%; }
   padding: 32px 40px 60px;
   max-width: 1400px;
   margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 @media (max-width: 980px) {
   .dash-body { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 600px) {
+  .dash-nav { padding: 14px 18px; }
+  .dash-nav .brand { font-size: 18px; }
+  .dash-nav .user-area { gap: 10px; font-size: 12.5px; flex-wrap: wrap; }
+  .dash-nav .logout-btn { padding: 6px 12px; font-size: 12px; }
+
+  .dash-body { padding: 18px 14px 40px; gap: 18px; }
+
+  .panel { padding: 16px; }
+  .panel h2 { font-size: 17px; }
+
+  .job-title { font-size: 16px; }
+
+  .filter-pill { padding: 6px 11px; font-size: 12px; }
+
+  .job-card {
+    flex-direction: column;
+  }
 }
 
 .panel {
@@ -204,7 +229,7 @@ html, body { overflow-x: hidden; max-width: 100%; }
 .match-badge .pct { font-size: 14px; font-weight: 700; line-height: 1; }
 .match-badge .lbl { font-size: 8px; color: var(--slate); letter-spacing: 0.04em; }
 
-.job-main { flex: 1; min-width: 0; }
+.job-main { flex: 1; min-width: 0; max-width: 100%; }
 .job-title-row {
   display: flex;
   justify-content: space-between;
