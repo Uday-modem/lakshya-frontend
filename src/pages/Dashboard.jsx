@@ -24,11 +24,11 @@ export default function Dashboard({ user, onLogout }) {
   })
 
   useEffect(() => {
-    resumeApi
-      .getSkills()
-      .then((res) => {
-        setSkills(res.skills || [])
-        setHasExistingResume((res.skills || []).length > 0)
+    userApi
+      .getProfile()
+      .then((profile) => {
+        setSkills(profile.skills || [])
+        setHasExistingResume(!!profile.hasResume)
       })
       .catch(() => {})
   }, [])
