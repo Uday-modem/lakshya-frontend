@@ -11,6 +11,7 @@ import '../styles/dashboard.css'
 export default function Dashboard({ user, onLogout }) {
   const [skills, setSkills] = useState([])
   const [hasExistingResume, setHasExistingResume] = useState(false)
+  const [allJobs, setAllJobs] = useState([])
   const [jobs, setJobs] = useState([])
   const [checking, setChecking] = useState(false)
   const [hasSearched, setHasSearched] = useState(false)
@@ -53,13 +54,49 @@ export default function Dashboard({ user, onLogout }) {
         jobType: normalize(filters.jobType),
         experienceLevel: normalize(filters.experienceLevel),
       })
-      setJobs(res.jobs || [])
+      const fetched = res.jobs || []
+      setAllJobs(fetched)
+      setJobs(fetched)
     } catch (err) {
       setError(err.response?.data?.message || 'Could not fetch jobs right now. Please try again.')
+      setAllJobs([])
       setJobs([])
     } finally {
       setChecking(false)
     }
+  }
+
+  const hoursSince = (dateStr) => {
+    if (!dateStr) return null
+    const posted = new Date(dateStr)
+    if (Number.isNaN(posted.getTime())) return null
+    return (Date.now() - posted.getTime()) / (1000 * 60 * 60)
+  }
+
+  // Client-side only - filters the already-fetched job list, never calls the API again.
+  const handleApplyFilters = () => {
+    const wm = normalize(filters.workMode)
+    const jt = normalize(filters.jobType)
+    const exp = normalize(filters.experienceLevel)
+
+    const result = allJobs.filter((job) => {
+      if (wm && job.workMode && job.workMode !== 'Unknown' && job.workMode.toLowerCase() !== wm.toLowerCase()) return false
+      if (jt && job.jobType && job.jobType !== 'Unknown' && !job.jobType.toLowerCase().includes(jt.toLowerCase())) return false
+      if (exp && job.experienceLevel && job.experienceLevel !== 'Unknown' && job.experienceLevel.toLowerCase() !== exp.toLowerCase()) return false
+      if (filters.location && job.location && !job.location.toLowerCase().includes(filters.location.toLowerCase())) return false
+      if (filters.postedWithin) {
+        const hrs = hoursSince(job.postedDate)
+        if (hrs !== null && hrs > filters.postedWithin) return false
+      }
+      if (filters.selectedLocations && filters.selectedLocations.length > 0) {
+        const jobLoc = (job.location || '').toLowerCase()
+        const matches = filters.selectedLocations.some((loc) => jobLoc.includes(loc.toLowerCase()))
+        if (!matches) return false
+      }
+      return true
+    })
+
+    setJobs(result)
   }
 
   return (
@@ -84,7 +121,13 @@ export default function Dashboard({ user, onLogout }) {
             </div>
           </div>
 
-          <JobFilters filters={filters} setFilters={setFilters} onApply={handleCheckJobs} applying={checking} />
+          <JobFilters
+            filters={filters}
+            setFilters={setFilters}
+            onApply={handleApplyFilters}
+            applying={false}
+            availableLocations={[...new Set(allJobs.map((j) => j.location).filter(Boolean))]}
+          />
 
           <ApplicationsHistory refreshKey={jobs.length} />
         </div>

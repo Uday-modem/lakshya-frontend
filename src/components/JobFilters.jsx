@@ -3,9 +3,22 @@ import React from 'react'
 const WORK_MODES = ['Any', 'Remote', 'Hybrid', 'Office']
 const JOB_TYPES = ['Any', 'Internship', 'Full-time']
 const EXPERIENCE_LEVELS = ['Any', 'Fresher', '1-3 years', '3-5 years']
+const POSTED_WITHIN = [
+  { label: 'Any time', value: null },
+  { label: 'Last 24 hours', value: 24 },
+  { label: 'Last 48 hours', value: 48 },
+]
 
-export default function JobFilters({ filters, setFilters, onApply, applying }) {
+export default function JobFilters({ filters, setFilters, onApply, applying, availableLocations = [] }) {
   const setField = (field, value) => setFilters((f) => ({ ...f, [field]: value }))
+
+  const toggleLocation = (loc) => {
+    setFilters((f) => {
+      const current = f.selectedLocations || []
+      const next = current.includes(loc) ? current.filter((l) => l !== loc) : [...current, loc]
+      return { ...f, selectedLocations: next }
+    })
+  }
 
   return (
     <div className="panel" style={{ marginTop: 20 }}>
@@ -70,8 +83,42 @@ export default function JobFilters({ filters, setFilters, onApply, applying }) {
         </div>
       </div>
 
+      <div className="filter-group">
+        <label>Posted</label>
+        <div className="filter-pills">
+          {POSTED_WITHIN.map((opt) => (
+            <button
+              key={opt.label}
+              className={`filter-pill ${filters.postedWithin === opt.value ? 'active' : ''}`}
+              onClick={() => setField('postedWithin', opt.value)}
+              type="button"
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {availableLocations.length > 0 && (
+        <div className="filter-group">
+          <label>Locations in results</label>
+          <div className="filter-pills">
+            {availableLocations.map((loc) => (
+              <button
+                key={loc}
+                className={`filter-pill ${(filters.selectedLocations || []).includes(loc) ? 'active' : ''}`}
+                onClick={() => toggleLocation(loc)}
+                type="button"
+              >
+                {loc}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       <button className="check-jobs-btn" onClick={onApply} disabled={applying} type="button">
-        {applying ? 'Applying filters…' : 'Apply filters'}
+        Apply filters
       </button>
     </div>
   )
