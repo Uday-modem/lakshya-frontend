@@ -3,12 +3,6 @@ import { Link, useNavigate } from 'react-router-dom'
 import { authApi } from '../api/api.js'
 import '../styles/auth.css'
 
-const AUTH_FEATURES = [
-  { icon: '⚡', text: 'Fresh matches from 8 job sources, scanned every 48 hours' },
-  { icon: '🎯', text: 'Skills extracted straight from your resume — no manual tagging' },
-  { icon: '🎓', text: 'Mock interviews, hackathons & community — coming soon' },
-]
-
 export default function Signup({ onAuth }) {
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
@@ -40,20 +34,22 @@ export default function Signup({ onAuth }) {
   return (
     <div className="auth-page">
       <div className="auth-visual">
-        <div>
-          <div className="auth-brand">Lak<span>shya</span></div>
-          <div className="auth-tagline">
-            Your skills, matched against jobs posted in the last 48 hours.
-          </div>
+        <div className="auth-brand">Lak<span>shya</span></div>
 
-          <ul className="auth-feature-list">
-            {AUTH_FEATURES.map((f) => (
-              <li key={f.text}>
-                <span className="auth-feature-icon">{f.icon}</span>
-                <span>{f.text}</span>
-              </li>
-            ))}
-          </ul>
+        <div className="auth-hero-block">
+          <p className="auth-headline">
+            Your aim, <span>our mission.</span>
+          </p>
+          <div className="auth-hero-frame">
+            <img
+              src="/images/lakshya-hero.png"
+              alt="Illustration of a crowd competing for a single job opening, while a Lakshya user applies from their laptop and gets hired"
+              className="auth-hero-img"
+            />
+          </div>
+          <p className="auth-hero-caption">
+            Join in a minute — your skills, matched against jobs posted in the last 48 hours.
+          </p>
         </div>
 
         <div className="auth-stat-row">
