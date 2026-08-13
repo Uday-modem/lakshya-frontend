@@ -24,6 +24,7 @@ export default function JobCard({ job, onOpenDetail }) {
 
   return (
     <div className="job-card">
+      <div className="company-avatar">{(job.company || '?').trim().charAt(0).toUpperCase()}</div>
       <div className="match-badge">
         <div className="pct">{Math.round(job.matchScore || 0)}%</div>
         <div className="lbl">MATCH</div>
@@ -51,7 +52,7 @@ export default function JobCard({ job, onOpenDetail }) {
           <span>{job.workMode}</span>
           <span>{job.jobType}</span>
           {job.postedDate ? <span>Posted {job.postedDate}</span> : null}
-          {job.salary ? <span>{job.salary}</span> : null}
+          {job.salary ? <span className="salary-pill">{job.salary}</span> : null}
         </div>
 
         <p className="job-desc">{previewText}</p>
