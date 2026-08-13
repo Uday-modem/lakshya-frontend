@@ -37,7 +37,7 @@ export default function Login({ onAuth }) {
           </p>
           <div className="auth-hero-frame">
             <img
-              src="/images/lakshya-hero.png"
+              src="src/images/lakshya-hero.png"
               alt="Illustration of a crowd competing for a single job opening, while a Lakshya user applies from their laptop and gets hired"
               className="auth-hero-img"
             />
