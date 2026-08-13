@@ -4,9 +4,11 @@ import ResumeUpload from '../components/ResumeUpload.jsx'
 import SkillsList from '../components/SkillsList.jsx'
 import JobFilters from '../components/JobFilters.jsx'
 import JobList from '../components/JobList.jsx'
-import ProfileDropdown from '../components/ProfileDropdown.jsx'
 import ApplicationsHistory from '../components/ApplicationsHistory.jsx'
+import TopNav from '../components/TopNav.jsx'
+import DashboardStats from '../components/DashboardStats.jsx'
 import '../styles/dashboard.css'
+import '../styles/platform.css'
 
 export default function Dashboard({ user, onLogout }) {
   const [skills, setSkills] = useState([])
@@ -101,16 +103,17 @@ export default function Dashboard({ user, onLogout }) {
 
   return (
     <div className="dash-shell">
-      <nav className="dash-nav">
-        <div className="brand">Lak<span>shya</span></div>
-        <div className="user-area">
-          <span>Hi, {user.fullName?.split(' ')[0]}</span>
-          <ProfileDropdown user={user} refreshKey={profileRefreshKey} />
-          <button className="logout-btn" onClick={onLogout}>Log out</button>
-        </div>
-      </nav>
+      <TopNav user={user} onLogout={onLogout} profileRefreshKey={profileRefreshKey} />
 
-      <div className="dash-body">
+      <div className="dash-body-outer">
+        <DashboardStats
+          skills={skills}
+          matchCount={jobs.length}
+          hasSearched={hasSearched}
+          refreshKey={profileRefreshKey + jobs.length}
+        />
+
+        <div className="dash-body">
         <div>
           <div className="panel">
             <h2>Your resume</h2>
@@ -135,6 +138,7 @@ export default function Dashboard({ user, onLogout }) {
         <div>
           {error && <div className="banner-error">{error}</div>}
           <JobList jobs={jobs} loading={checking} hasSearched={hasSearched} />
+        </div>
         </div>
       </div>
     </div>

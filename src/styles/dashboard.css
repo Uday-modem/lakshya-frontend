@@ -49,7 +49,7 @@ html, body { overflow-x: hidden; max-width: 100%; }
   display: grid;
   grid-template-columns: 360px 1fr;
   gap: 28px;
-  padding: 32px 40px 60px;
+  padding: 4px 0 60px;
   max-width: 1400px;
   margin: 0 auto;
   width: 100%;
@@ -76,7 +76,7 @@ html, body { overflow-x: hidden; max-width: 100%; }
   .dash-nav .user-area { gap: 10px; font-size: 12.5px; flex-wrap: wrap; }
   .dash-nav .logout-btn { padding: 6px 12px; font-size: 12px; }
 
-  .dash-body { padding: 18px 14px 40px; gap: 18px; }
+  .dash-body { padding: 4px 0 40px; gap: 18px; }
 
   .panel { padding: 16px; }
   .panel h2 { font-size: 17px; }

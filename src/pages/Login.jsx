@@ -3,9 +3,16 @@ import { Link, useNavigate } from 'react-router-dom'
 import { authApi } from '../api/api.js'
 import '../styles/auth.css'
 
+const AUTH_FEATURES = [
+  { icon: '⚡', text: 'Fresh matches from 8 job sources, scanned every 48 hours' },
+  { icon: '🎯', text: 'Skills extracted straight from your resume — no manual tagging' },
+  { icon: '🎓', text: 'Mock interviews, hackathons & community — coming soon' },
+]
+
 export default function Login({ onAuth }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
@@ -28,10 +35,22 @@ export default function Login({ onAuth }) {
   return (
     <div className="auth-page">
       <div className="auth-visual">
-        <div className="auth-brand">Lak<span>shya</span></div>
-        <div className="auth-tagline">
-          Upload your resume once. We'll watch every board for you.
+        <div>
+          <div className="auth-brand">Lak<span>shya</span></div>
+          <div className="auth-tagline">
+            Upload your resume once. We'll watch every board for you.
+          </div>
+
+          <ul className="auth-feature-list">
+            {AUTH_FEATURES.map((f) => (
+              <li key={f.text}>
+                <span className="auth-feature-icon">{f.icon}</span>
+                <span>{f.text}</span>
+              </li>
+            ))}
+          </ul>
         </div>
+
         <div className="auth-stat-row">
           <div><strong>8</strong>job sources scanned</div>
           <div><strong>48h</strong>freshness window</div>
@@ -60,14 +79,24 @@ export default function Login({ onAuth }) {
             </div>
             <div className="field-group">
               <label htmlFor="password">Password</label>
-              <input
-                id="password"
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-              />
+              <div className="password-field">
+                <input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                />
+                <button
+                  type="button"
+                  className="password-toggle"
+                  onClick={() => setShowPassword((s) => !s)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? '🙈' : '👁️'}
+                </button>
+              </div>
             </div>
             <button className="btn-primary" type="submit" disabled={loading}>
               {loading ? 'Signing in…' : 'Sign in'}
@@ -76,6 +105,10 @@ export default function Login({ onAuth }) {
 
           <div className="auth-switch">
             New to Lakshya? <Link to="/signup">Create an account</Link>
+          </div>
+
+          <div className="auth-trust-note">
+            🔒 Your resume and data stay private and are never shared without your action.
           </div>
         </div>
       </div>

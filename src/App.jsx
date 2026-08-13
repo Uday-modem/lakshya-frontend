@@ -3,6 +3,9 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Login from './pages/Login.jsx'
 import Signup from './pages/Signup.jsx'
 import Dashboard from './pages/Dashboard.jsx'
+import Interviews from './pages/Interviews.jsx'
+import Hackathons from './pages/Hackathons.jsx'
+import Community from './pages/Community.jsx'
 
 function App() {
   const [user, setUser] = useState(null)
@@ -48,6 +51,18 @@ function App() {
         <Route
           path="/dashboard"
           element={user ? <Dashboard user={user} onLogout={handleLogout} /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/interviews"
+          element={user ? <Interviews user={user} onLogout={handleLogout} /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/hackathons"
+          element={user ? <Hackathons user={user} onLogout={handleLogout} /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/community"
+          element={user ? <Community user={user} onLogout={handleLogout} /> : <Navigate to="/login" />}
         />
         <Route path="*" element={<Navigate to={user ? '/dashboard' : '/login'} />} />
       </Routes>
