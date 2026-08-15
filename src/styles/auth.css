@@ -178,6 +178,28 @@
 }
 .btn-back:hover { color: var(--ink-navy); }
 
+.btn-link {
+  width: 100%;
+  background: none;
+  border: none;
+  color: var(--gold-dark);
+  font-weight: 600;
+  font-size: 13.5px;
+  margin-top: 12px;
+  padding: 4px;
+  text-align: center;
+}
+.btn-link:hover { text-decoration: underline; }
+.btn-link:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.otp-hint {
+  font-size: 13.5px;
+  color: var(--slate);
+  margin: 0 0 18px;
+  line-height: 1.5;
+}
+.otp-hint strong { color: var(--ink-navy); }
+
 /* ============ Email/password form ============ */
 .field-group {
   margin-bottom: 18px;

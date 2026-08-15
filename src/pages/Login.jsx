@@ -5,6 +5,7 @@ import skyImage from '../images/lakshya-hero-sky.png'
 import groundImage from '../images/lakshya-hero-ground.png'
 import AuthFooter from '../components/AuthFooter.jsx'
 import PlatformPillars from '../components/PlatformPillars.jsx'
+import { useGoogleSignIn } from '../hooks/useGoogleSignIn.js'
 import '../styles/auth.css'
 
 export default function Login({ onAuth }) {
@@ -12,6 +13,10 @@ export default function Login({ onAuth }) {
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [showEmailForm, setShowEmailForm] = useState(false)
+  const [otpMode, setOtpMode] = useState(false)
+  const [otpSent, setOtpSent] = useState(false)
+  const [otpCode, setOtpCode] = useState('')
+  const [otpLoading, setOtpLoading] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
@@ -32,8 +37,48 @@ export default function Login({ onAuth }) {
     }
   }
 
-  const handleGoogleSignIn = () => {
-    window.location.href = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api'}/auth/google`
+  const handleGoogleCredential = async (idToken) => {
+    setError('')
+    setLoading(true)
+    try {
+      const res = await authApi.google(idToken)
+      onAuth(res)
+      navigate('/dashboard')
+    } catch (err) {
+      setError(err.response?.data?.message || 'Google sign-in failed. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const { trigger: triggerGoogleSignIn } = useGoogleSignIn(handleGoogleCredential)
+
+  const handleSendLoginOtp = async () => {
+    setError('')
+    setOtpLoading(true)
+    try {
+      await authApi.sendLoginOtp(email)
+      setOtpSent(true)
+    } catch (err) {
+      setError(err.response?.data?.message || 'Could not send code. Please try again.')
+    } finally {
+      setOtpLoading(false)
+    }
+  }
+
+  const handleVerifyLoginOtp = async (e) => {
+    e.preventDefault()
+    setError('')
+    setLoading(true)
+    try {
+      const res = await authApi.verifyLoginOtp({ email, otp: otpCode })
+      onAuth(res)
+      navigate('/dashboard')
+    } catch (err) {
+      setError(err.response?.data?.message || 'That code is invalid or has expired.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -63,7 +108,7 @@ export default function Login({ onAuth }) {
 
               {!showEmailForm ? (
                 <div className="auth-oauth">
-                  <button type="button" className="btn-oauth" onClick={handleGoogleSignIn}>
+                  <button type="button" className="btn-oauth" onClick={triggerGoogleSignIn}>
                     <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
                       <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9C16.64 14.2 17.64 11.9 17.64 9.2z" />
                       <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.94v2.33A9 9 0 0 0 9 18z" />
@@ -79,6 +124,68 @@ export default function Login({ onAuth }) {
                     Continue with email
                   </button>
                 </div>
+              ) : otpMode ? (
+                <form onSubmit={handleVerifyLoginOtp}>
+                  <div className="field-group">
+                    <label htmlFor="email">Email</label>
+                    <input
+                      id="email"
+                      type="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="you@example.com"
+                      autoFocus
+                      disabled={otpSent}
+                    />
+                  </div>
+
+                  {!otpSent ? (
+                    <button
+                      type="button"
+                      className="btn-primary"
+                      disabled={otpLoading || !email}
+                      onClick={handleSendLoginOtp}
+                    >
+                      {otpLoading ? 'Sending code…' : 'Send code'}
+                    </button>
+                  ) : (
+                    <>
+                      <div className="field-group">
+                        <label htmlFor="login-otp">6-character code</label>
+                        <input
+                          id="login-otp"
+                          type="text"
+                          required
+                          maxLength={6}
+                          value={otpCode}
+                          onChange={(e) => setOtpCode(e.target.value)}
+                          placeholder="e.g. 7GaX2p"
+                          autoFocus
+                        />
+                      </div>
+                      <button className="btn-primary" type="submit" disabled={loading}>
+                        {loading ? 'Verifying…' : 'Verify & sign in'}
+                      </button>
+                      <button
+                        type="button"
+                        className="btn-link"
+                        disabled={otpLoading}
+                        onClick={handleSendLoginOtp}
+                      >
+                        {otpLoading ? 'Resending…' : 'Resend code'}
+                      </button>
+                    </>
+                  )}
+
+                  <button
+                    type="button"
+                    className="btn-back"
+                    onClick={() => { setOtpMode(false); setOtpSent(false); setOtpCode('') }}
+                  >
+                    ← Use password instead
+                  </button>
+                </form>
               ) : (
                 <form onSubmit={handleSubmit}>
                   <div className="field-group">
@@ -118,6 +225,10 @@ export default function Login({ onAuth }) {
 
                   <button className="btn-primary" type="submit" disabled={loading}>
                     {loading ? 'Signing in…' : 'Sign in'}
+                  </button>
+
+                  <button type="button" className="btn-link" onClick={() => setOtpMode(true)}>
+                    Login with OTP
                   </button>
 
                   <button type="button" className="btn-back" onClick={() => setShowEmailForm(false)}>

@@ -31,6 +31,11 @@ client.interceptors.response.use(
 export const authApi = {
   signup: (data) => client.post('/auth/signup', data).then((r) => r.data),
   login: (data) => client.post('/auth/login', data).then((r) => r.data),
+  google: (idToken) => client.post('/auth/google', { idToken }).then((r) => r.data),
+  sendSignupOtp: (data) => client.post('/auth/signup/otp/send', data).then((r) => r.data),
+  verifySignupOtp: (data) => client.post('/auth/signup/otp/verify', data).then((r) => r.data),
+  sendLoginOtp: (email) => client.post('/auth/login/otp/send', { email }).then((r) => r.data),
+  verifyLoginOtp: (data) => client.post('/auth/login/otp/verify', data).then((r) => r.data),
 }
 
 export const resumeApi = {
